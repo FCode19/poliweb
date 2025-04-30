@@ -1,3 +1,6 @@
+body{
+    background-color: darkseagreen;
+}
 .seccion {
     height: 400px;
     position: relative;

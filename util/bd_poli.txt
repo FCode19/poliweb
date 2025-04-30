@@ -1,0 +1,7 @@
+create table usuario( 
+    Id_usuario int PRIMARY KEY, 
+    username varchar(50) not null, 
+    password_hash char(64) not null
+);
+
+INSERT INTO usuario (Id_usuario, username, contra) VALUES (21206499, "latcov", SHA2('Capitan967431804', 256));
