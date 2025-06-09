@@ -1,0 +1,37 @@
+[
+    {
+        "cod": "U001",
+        "nombre": "Juan",
+        "apellido": "Paredes",
+        "usuario": "lparedes",
+        "contra": "258741"
+    },
+    {
+        "cod": "U002",
+        "nombre": "Maria",
+        "apellido": "Herrera",
+        "usuario": "mherrera",
+        "contra": "abcdef"
+    },
+    {
+        "cod": "U003",
+        "nombre": "Carlos",
+        "apellido": "Ram\u00edrez",
+        "usuario": "cramirez",
+        "contra": "pass1234"
+    },
+    {
+        "cod": "U004",
+        "nombre": "Luisa",
+        "apellido": "G\u00f3mez",
+        "usuario": "lgomez",
+        "contra": "luisag2025"
+    },
+    {
+        "cod": "U005",
+        "nombre": "Ana",
+        "apellido": "Mart\u00ednez",
+        "usuario": "amartinez",
+        "contra": "ana2024"
+    }
+]

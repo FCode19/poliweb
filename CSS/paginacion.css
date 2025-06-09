@@ -1,0 +1,24 @@
+.mi-paginacion .pagination .page-link {
+color: #597739;
+border-color: #597739;
+background-color: transparent;
+}
+
+.mi-paginacion .pagination .page-link:hover {
+color: #123d12;
+border-color: #123d12;
+background-color: transparent;
+}
+
+.mi-paginacion .pagination .page-item.active .page-link {
+background-color: #597739;
+border-color: #597739;
+color: white;
+}
+
+.mi-paginacion .pagination .page-item.disabled .page-link {
+color: #ccc;
+pointer-events: none;
+background-color: transparent;
+border-color: #ddd;
+}

@@ -1,0 +1,81 @@
+.tabla-espaciada td,
+.tabla-espaciada th {
+padding-top: 0.7rem;
+padding-bottom: 0.7rem;
+}
+.contenedor-principal {
+display: flex;
+flex-direction: column;
+height: 100%;
+min-height: 70vh;
+}
+
+.input-busqueda {
+min-width: 200px;
+max-width: 350px;
+flex-grow: 1;
+}
+
+.tabla-espaciada td,
+.tabla-espaciada th {
+padding-top: 0.7rem;
+padding-bottom: 0.7rem;
+}
+
+.tabla-contenedor {
+border-radius: 1rem;
+border: 1px solid var(--bs-secondary-bg);
+box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.1);
+overflow: hidden;
+}
+
+.paginacion-contenedor {
+padding-top: 1rem;
+}
+
+.btn-eliminar {
+padding: 0;
+background: transparent;
+border: none;
+color: #597739;
+cursor: pointer;
+transition: color 0.2s ease-in-out;
+}
+
+.btn-eliminar:hover {
+color: #123d12;
+}
+
+.btn-nuevo-usuario {
+background-color: #597739;
+color: white;
+border: none;
+border-radius: 0.5rem;
+transition: background-color 0.3s ease;
+}
+
+.btn-nuevo-usuario:hover {
+background-color: #4d682f;
+}
+
+.btn-editar {
+color: #597739;
+transition: color 0.3s ease;
+}
+
+.btn-editar:hover {
+color: #123d12;
+}
+
+.btn-buscar {
+color: #597739;
+border-color: #597739;
+background-color: transparent;
+transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-buscar:hover {
+color: #123d12;
+border-color: #123d12;
+background-color: transparent;
+}
