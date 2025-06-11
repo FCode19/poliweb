@@ -1,0 +1,24 @@
+[
+  {
+    "num_entrevista": "E030",
+    "cod": "P003",
+    "cip": 47333447,
+    "fecha": "2025-03-28",
+    "cat_especifico": 12,
+    "cat_rutinario": 9,
+    "cat_vinculos_externos": 14,
+    "file_entrevista": "Entrevista_28-03_47333447",
+    "comentarios": "Puntuación elevada en vínculos externos. Requiere atención."
+  },
+  {
+    "num_entrevista": "E031",
+    "cod": "P003",
+    "cip": 47333447,
+    "fecha": "2025-05-20",
+    "cat_especifico": 13,
+    "cat_rutinario": 10,
+    "cat_vinculos_externos": 15,
+    "file_entrevista": "Entrevista_20-05_47333447",
+    "comentarios": "Tendencia ascendente en categoría crítica."
+  }
+]

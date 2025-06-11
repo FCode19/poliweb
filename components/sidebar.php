@@ -27,8 +27,20 @@
             </a>
         </li>
     </ul>
+    
+    <small class="text-uppercase text-white-50">Estadisticas</small>
+    <hr class="my-1 border-secondary">
+    <ul class="nav flex-column mb-4">
+        <li class="nav-item">
+            <a href="app.php?view=metrica"
+               class="nav-link text-white px-0 <?= ($_GET['view'] ?? '') === 'metrica' ? 'fw-bold' : '' ?>">
+                Métricas
+            </a>
+        </li>
+    </ul>
+
 
     <div class="mt-auto">
-        <a href="index.php" class="nav-link text-white px-0">Salir</a>
+        <a href="logout.php" class="nav-link text-white px-0">Salir</a>
     </div>
 </div>

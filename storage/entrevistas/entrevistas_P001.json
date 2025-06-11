@@ -1,0 +1,24 @@
+[
+  {
+    "num_entrevista": "E010",
+    "cod": "P001",
+    "cip": 47112345,
+    "fecha": "2025-04-10",
+    "cat_especifico": 14,
+    "cat_rutinario": 16,
+    "cat_vinculos_externos": 6,
+    "file_entrevista": "Entrevista_10-04_47112345",
+    "comentarios": "Evaluación dentro de parámetros aceptables."
+  },
+  {
+    "num_entrevista": "E011",
+    "cod": "P001",
+    "cip": 47112345,
+    "fecha": "2025-05-08",
+    "cat_especifico": 15,
+    "cat_rutinario": 14,
+    "cat_vinculos_externos": 7,
+    "file_entrevista": "Entrevista_08-05_47112345",
+    "comentarios": "Ligera disminución en categoría específica."
+  }
+]

@@ -1,0 +1,24 @@
+[
+  {
+    "num_entrevista": "E001",
+    "cod": "P004",
+    "cip": 48562315,
+    "fecha": "2025-05-07",
+    "cat_especifico": 17,
+    "cat_rutinario": 12,
+    "cat_vinculos_externos": 2,
+    "file_entrevista": "Entrevista_07-05_48562315",
+    "comentarios": "Presenta una muy grave interpretación en la categoría de vínculos externos."
+  },
+  {
+    "num_entrevista": "E002",
+    "cod": "P004",
+    "cip": 48562315,
+    "fecha": "2025-05-15",
+    "cat_especifico": 15,
+    "cat_rutinario": 14,
+    "cat_vinculos_externos": 5,
+    "file_entrevista": "Entrevista_15-05_48562315",
+    "comentarios": "Resultados normales, mejora en categoría vínculos externos."
+  }
+]

@@ -11,6 +11,30 @@ class UsuarioController
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardarEdicion'])) {
             $data = $_POST;
             $usuarios = json_decode(file_get_contents($ruta), true);
+            $errores = [];
+
+            // Validaciones
+            if (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/', $data['nombre'])) {
+                $errores[] = "El nombre solo debe contener letras.";
+            }
+            if (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/', $data['apellido'])) {
+                $errores[] = "El apellido solo debe contener letras.";
+            }
+            foreach ($usuarios as $u) {
+                if ($u['usuario'] === $data['usuario'] && $u['cod'] !== $data['cod']) {
+                    $errores[] = "El nombre de usuario ya está en uso.";
+                    break;
+                }
+            }
+            if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d).{8,}$/', $data['contra'])) {
+                $errores[] = "La contraseña debe tener al menos 8 caracteres, con letras y números.";
+            }
+
+            if (!empty($errores)) {
+                $_SESSION['errores'] = $errores;
+                header('Location: app.php?view=usuarios');
+                exit();
+            }
 
             foreach ($usuarios as &$usuario) {
                 if ($usuario['cod'] === $data['cod']) {
@@ -47,6 +71,30 @@ class UsuarioController
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar'])) {
             $data = $_POST;
             $usuarios = json_decode(file_get_contents($ruta), true);
+            $errores = [];
+
+            // Validaciones
+            if (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/', $data['nombre'])) {
+                $errores[] = "El nombre solo debe contener letras.";
+            }
+            if (!preg_match('/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/', $data['apellido'])) {
+                $errores[] = "El apellido solo debe contener letras.";
+            }
+            foreach ($usuarios as $u) {
+                if ($u['usuario'] === $data['usuario']) {
+                    $errores[] = "El nombre de usuario ya está en uso.";
+                    break;
+                }
+            }
+            if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d).{8,}$/', $data['contra'])) {
+                $errores[] = "La contraseña debe tener al menos 8 caracteres, con letras y números.";
+            }
+
+            if (!empty($errores)) {
+                $_SESSION['errores'] = $errores;
+                header('Location: app.php?view=usuarios');
+                exit();
+            }
 
             // Generar código único incremental con formato U###
             if (count($usuarios) === 0) {

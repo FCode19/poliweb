@@ -15,7 +15,7 @@
     },
     {
         "cod": "U003",
-        "nombre": "Carlos",
+        "nombre": "Rodrigo",
         "apellido": "Ram\u00edrez",
         "usuario": "cramirez",
         "contra": "pass1234"
@@ -24,7 +24,7 @@
         "cod": "U004",
         "nombre": "Luisa",
         "apellido": "G\u00f3mez",
-        "usuario": "lgomez",
+        "usuario": "Gomez882",
         "contra": "luisag2025"
     },
     {
@@ -33,5 +33,19 @@
         "apellido": "Mart\u00ednez",
         "usuario": "amartinez",
         "contra": "ana2024"
+    },
+    {
+        "cod": "U006",
+        "nombre": "Luis",
+        "apellido": "Atencio",
+        "usuario": "la8768",
+        "contra": "l232893C"
+    },
+    {
+        "cod": "U007",
+        "nombre": "Percy",
+        "apellido": "Montalvo",
+        "usuario": "PM444",
+        "contra": "444Montalvo"
     }
 ]

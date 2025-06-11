@@ -25,7 +25,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Project/PHP/PHPProject.php to edi
                         <span class="navbar-text fw-bold">SISTEMA DE GESTIÓN DE RESULTADOS DE PRUEBAS POLIGRÁFICAS</span>
                     </div>
                     <div class="d-flex ms-auto">
-                        <a href="#" class="btn btn-primary">Iniciar Sesión</a>
+                        <a href="login.php" class="btn btn-primary">Iniciar Sesión</a>
                     </div>
                 </div>
             </nav>

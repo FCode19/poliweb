@@ -1,3 +1,13 @@
+<?php if (isset($_SESSION['errores'])): ?>
+    <div class="alert alert-danger">
+        <ul>
+            <?php foreach ($_SESSION['errores'] as $error): ?>
+                <li><?= htmlspecialchars($error) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+    <?php unset($_SESSION['errores']); ?>
+<?php endif; ?>
 <?php $titulo = 'Listado de Usuarios'; ?>
 <?php require_once __DIR__ . '/header_usuario.php'; ?>
 <?php include __DIR__ . '/../../components/sidebar.php'; ?>

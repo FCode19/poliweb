@@ -1,0 +1,13 @@
+[
+  {
+    "num_entrevista": "E050",
+    "cod": "P005",
+    "cip": 47555678,
+    "fecha": "2025-05-12",
+    "cat_especifico": 8,
+    "cat_rutinario": 6,
+    "cat_vinculos_externos": 5,
+    "file_entrevista": "Entrevista_12-05_47555678",
+    "comentarios": "Resultados bajos en general. Posible fatiga operativa."
+  }
+]
