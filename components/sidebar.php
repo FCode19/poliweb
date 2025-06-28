@@ -6,17 +6,6 @@
         </div>
     </div>
 
-    <small class="text-uppercase text-white-50">Consultorías</small>
-    <hr class="my-1 border-secondary">
-    <ul class="nav flex-column mb-3">
-        <li class="nav-item">
-            <a href="app.php?view=formularios"
-                class="nav-link text-white px-0 <?= ($_GET['view'] ?? '') === 'formularios' ? 'fw-bold' : '' ?>">
-                Formularios
-            </a>
-        </li>
-    </ul>
-
     <small class="text-uppercase text-white-50">Gestión</small>
     <hr class="my-1 border-secondary">
     <ul class="nav flex-column mb-4">
@@ -27,13 +16,13 @@
             </a>
         </li>
     </ul>
-    
+
     <small class="text-uppercase text-white-50">Estadisticas</small>
     <hr class="my-1 border-secondary">
     <ul class="nav flex-column mb-4">
         <li class="nav-item">
             <a href="app.php?view=metrica"
-               class="nav-link text-white px-0 <?= ($_GET['view'] ?? '') === 'metrica' ? 'fw-bold' : '' ?>">
+                class="nav-link text-white px-0 <?= ($_GET['view'] ?? '') === 'metrica' ? 'fw-bold' : '' ?>">
                 Métricas
             </a>
         </li>

@@ -1,6 +1,6 @@
 <div class="modal fade" id="modalEliminar" tabindex="-1" aria-labelledby="modalEliminarLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="app.php?view=usuarios" class="modal-content">
+        <form method="POST" action="app.php?view=usuarios&action=eliminar" class="modal-content">
 
             <div class="modal-header text-white" style="background-color: #123d12;">
                 <h5 class="modal-title" id="modalEliminarLabel">Confirmar eliminación</h5>
@@ -10,7 +10,9 @@
 
             <div class="modal-body">
                 <p>¿Estás seguro de que deseas eliminar al usuario <strong id="usuarioNombre"></strong>?</p>
-                <input type="hidden" name="eliminar" id="eliminarCod">
+                <input type="hidden" name="cod" id="eliminarCod">
+                <input type="hidden" name="pagina" value="<?= $_GET['page'] ?? 1 ?>">
+
             </div>
 
             <div class="modal-footer">

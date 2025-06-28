@@ -1,12 +1,11 @@
 <?php
 session_start();
 if (!isset($_SESSION['usuario'])) {
-    header("Location: login.php");
-    exit;
+    header('Location: login.php');
+    exit();
 }
 ?>
 <?php
-
 require_once __DIR__ . '/controllers/UsuarioController.php';
 require_once __DIR__ . '/controllers/MetricaController.php';
 
@@ -25,6 +24,21 @@ switch ($vista) {
     case 'usuarios':
     default:
         $controller = new UsuarioController();
-        $controller->listar();
+
+        $accion = $_GET['action'] ?? null;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($accion === 'crear') {
+                $controller->crear();
+            } elseif ($accion === 'editar') {
+                $controller->editar();
+            } elseif ($accion === 'eliminar') {
+                $controller->eliminar();
+            } else {
+                $controller->listar();
+            }
+        } else {
+            $controller->listar();
+        }
         break;
 }
