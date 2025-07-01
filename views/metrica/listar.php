@@ -1,6 +1,11 @@
 <?php include_once "views/metrica/header_metrica.php"; ?>
 
 <div class="container mt-4">
+    <div class="mb-4">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalEntrevista">
+            Subir Entrevista
+        </button>
+    </div>
     <h2 class="mb-4">Resultados poligráficos</h2>
     <div class="table-responsive mb-5">
         <table class="table table-striped table-bordered text-center">
@@ -20,29 +25,29 @@
                 <?php foreach ($entrevistas as $e): ?>
                     <tr>
                         <td><?= $e['num_entrevista'] ?></td>
-                        <td><?= $e['cod'] ?></td>
+                        <td><?= $e['nombre_completo'] ?></td>
                         <td><?= $e['cip'] ?></td>
                         <td><?= $e['fecha'] ?></td>
-                        <td><?= $e['cat_especifico'] ?></td>
-                        <td><?= $e['cat_rutinario'] ?></td>
-                        <td><?= $e['cat_vinculos_externos'] ?></td>
-                        <td><?= $e['comentarios'] ?></td>
+                        <td><?= $e['cat_especifico'] ?? 0 ?></td>
+                        <td><?= $e['cat_rutinario'] ?? 0 ?></td>
+                        <td><?= $e['cat_vinculos_externos'] ?? 0 ?></td>
+                        <td><?= $e['comentarios'] ?? '-' ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
     
-    <h2 class="mb-4">Métricas por Usuario</h2>
+    <h2 class="mb-4">Métricas por Militar</h2>
 
     <div class="mb-3">
-        <label for="usuarioSelect" class="form-label">Seleccionar Usuarios:</label>
+        <label for="usuarioSelect" class="form-label">Seleccionar Militares:</label>
         <select id="usuarioSelect" class="form-select" multiple style="max-width: 400px;">
-            <?php foreach ($usuariosDisponibles as $usuario): ?>
-                <option value="<?= $usuario ?>"><?= $usuario ?></option>
+            <?php foreach ($usuariosDisponibles as $cip => $nombreCompleto): ?>
+                <option value="<?= $cip ?>"><?= $nombreCompleto ?></option>
             <?php endforeach; ?>
         </select>
-        <div class="form-text">Mantén Ctrl (Windows) o Cmd (Mac) para seleccionar múltiples usuarios.</div>
+        <div class="form-text">Mantén Ctrl (Windows) o Cmd (Mac) para seleccionar múltiples militares.</div>
     </div>
 
     <div class="table-responsive mb-5">
@@ -53,12 +58,13 @@
                     <th>Específico</th>
                     <th>Rutinario</th>
                     <th>Vínculos Externos</th>
+                    <th>Situación</th>
                 </tr>
             </thead>
             <tbody id="tablaEntrevistas">
                 <?php foreach ($entrevistas as $e): ?>
                     <tr>
-                        <td><?= $e['cod'] ?></td>
+                        <td><?= $e['nombre_completo'] ?></td>
                         <td><?= $e['cat_especifico'] ?></td>
                         <td><?= $e['cat_rutinario'] ?></td>
                         <td><?= $e['cat_vinculos_externos'] ?></td>
@@ -77,106 +83,213 @@
         </div>
     </div>
 </div>
+<?php
+foreach ($entrevistas as &$e) {
+    unset($e['file_entrevista']);
+}
+unset($e);
+?>
+<script>
+    let entrevistas = [];
+    <?php if (!empty($entrevistas)) : ?>
+        entrevistas = <?= json_encode($entrevistas, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK) ?>;
+    <?php else : ?>
+        console.warn("No hay entrevistas disponibles.");
+    <?php endif; ?>
 
+    console.log("Entrevistas cargadas:", entrevistas);
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const entrevistas = <?= json_encode($entrevistas) ?>;
-    const usuariosUnicos = [...new Set(entrevistas.map(e => e.cod))];
-    const colores = ['#4e79a7', '#f28e2b', '#e15759'];
+    document.addEventListener('DOMContentLoaded', function () {
+        const entrevistas = <?= json_encode($entrevistas, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK) ?>;
+        const colores = ['#4e79a7', '#f28e2b', '#e15759'];
 
-    const selectUsuarios = document.getElementById('usuarioSelect');
-    const tablaBody = document.getElementById('tablaEntrevistas');
-    let chartBar = null;
-    let chartPie = null;
-
-    function filtrarEntrevistasPorUsuarios(seleccionados) {
-        return entrevistas.filter(e => seleccionados.includes(e.cod));
-    }
-
-    function actualizarTabla(entrevistasFiltradas) {
-        tablaBody.innerHTML = '';
-        entrevistasFiltradas.forEach(e => {
-            const fila = `
-                <tr>
-                    <td>${e.cod}</td>
-                    <td>${e.cat_especifico}</td>
-                    <td>${e.cat_rutinario}</td>
-                    <td>${e.cat_vinculos_externos}</td>
-                </tr>
-            `;
-            tablaBody.innerHTML += fila;
-        });
-    }
-
-    function renderGraficos(usuariosFiltrados) {
-        const entrevistasFiltradas = filtrarEntrevistasPorUsuarios(usuariosFiltrados);
-        const datosAgrupados = {};
-        usuariosFiltrados.forEach(u => {
-            datosAgrupados[u] = entrevistasFiltradas.filter(e => e.cod === u);
+        const nombresMilitares = {};
+        entrevistas.forEach(e => {
+            nombresMilitares[e.cip] = `${e.cip} - ${e.nombre_completo}`;
         });
 
-        const datasets = ['cat_especifico', 'cat_rutinario', 'cat_vinculos_externos'].map((cat, i) => ({
-            label: cat.replace('cat_', '').replace('_', ' ').toUpperCase(),
-            data: usuariosFiltrados.map(u =>
-                datosAgrupados[u].reduce((acc, e) => acc + parseFloat(e[cat]), 0)
-            ),
-            backgroundColor: colores[i]
-        }));
+        const selectUsuarios = document.getElementById('usuarioSelect');
+        const tablaBody = document.getElementById('tablaEntrevistas');
+        let chartBar = null;
+        let chartPie = null;
 
-        const promedios = ['cat_especifico', 'cat_rutinario', 'cat_vinculos_externos'].map(cat => {
-            const valores = entrevistasFiltradas.map(e => parseFloat(e[cat]));
-            const total = valores.reduce((a, b) => a + b, 0);
-            return valores.length > 0 ? (total / valores.length).toFixed(2) : 0;
-        });
+        function obtenerSeleccionados() {
+            return [...selectUsuarios.selectedOptions].map(opt => opt.value);
+        }
 
-        if (chartBar) chartBar.destroy();
-        if (chartPie) chartPie.destroy();
+        function filtrarPorCip(cips) {
+            return entrevistas.filter(e => cips.includes(e.cip.toString()));
+        }
 
-        chartBar = new Chart(document.getElementById('graficoBarras'), {
-            type: 'bar',
-            data: {
-                labels: usuariosFiltrados,
-                datasets: datasets
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Comparación por Categoría'
+        function actualizarTabla(data) {
+            tablaBody.innerHTML = '';
+            data.forEach(e => {
+                const promedio = (e.cat_especifico + e.cat_rutinario + e.cat_vinculos_externos) / 3;
+                let situacion = '';
+                if (promedio <= 5) {
+                    situacion = '<span style="color:red; font-weight:bold;">Examinación urgente</span>';
+                } else if (promedio <= 8) {
+                    situacion = '<span style="color:orange; font-weight:bold;">Acudir pronto</span>';
+                } else {
+                    situacion = '<span style="color:green; font-weight:bold;">Esperar próximo examen</span>';
+                }
+
+                tablaBody.innerHTML += `
+                    <tr>
+                        <td>${e.nombre_completo}</td>
+                        <td>${e.cat_especifico}</td>
+                        <td>${e.cat_rutinario}</td>
+                        <td>${e.cat_vinculos_externos}</td>
+                        <td>${situacion}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function actualizarGraficos(cips) {
+            const datos = filtrarPorCip(cips);
+            const agrupado = {};
+            cips.forEach(cip => {
+                agrupado[cip] = datos.filter(e => e.cip == cip);
+            });
+
+            const categorias = ['cat_especifico', 'cat_rutinario', 'cat_vinculos_externos'];
+            const datasets = categorias.map((cat, i) => ({
+                label: cat.replace('cat_', '').replace('_', ' ').toUpperCase(),
+                data: cips.map(cip =>
+                    agrupado[cip].reduce((acc, e) => acc + parseFloat(e[cat]), 0)
+                ),
+                backgroundColor: colores[i]
+            }));
+
+            const promedios = categorias.map(cat => {
+                const valores = datos.map(e => parseFloat(e[cat]));
+                const total = valores.reduce((a, b) => a + b, 0);
+                return valores.length ? (total / valores.length).toFixed(2) : 0;
+            });
+
+            if (chartBar) chartBar.destroy();
+            if (chartPie) chartPie.destroy();
+
+            chartBar = new Chart(document.getElementById('graficoBarras'), {
+                type: 'bar',
+                data: {
+                    labels: cips.map(cip => nombresMilitares[cip]),
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Comparación por Categoría'
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        chartPie = new Chart(document.getElementById('graficoPie'), {
-            type: 'pie',
-            data: {
-                labels: ['Específico', 'Rutinario', 'Vínculos Externos'],
-                datasets: [{
-                    data: promedios,
-                    backgroundColor: colores
-                }]
-            },
-            options: {
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Promedio de Categorías (Gráfico Pie)'
+            chartPie = new Chart(document.getElementById('graficoPie'), {
+                type: 'pie',
+                data: {
+                    labels: ['Específico', 'Rutinario', 'Vínculos Externos'],
+                    datasets: [{
+                        data: promedios,
+                        backgroundColor: colores
+                    }]
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Promedio de Categorías (Gráfico Pie)'
+                        }
                     }
                 }
-            }
+            });
+
+            actualizarTabla(datos);
+        }
+
+        const todosCips = [...new Set(entrevistas.map(e => e.cip.toString()))];
+        actualizarGraficos(todosCips);
+
+        selectUsuarios.addEventListener('change', () => {
+            const seleccionados = obtenerSeleccionados();
+            actualizarGraficos(seleccionados.length ? seleccionados : todosCips);
         });
-
-        actualizarTabla(entrevistasFiltradas);
-    }
-
-    renderGraficos(usuariosUnicos);
-
-    selectUsuarios.addEventListener('change', () => {
-        const seleccionados = [...selectUsuarios.selectedOptions].map(opt => opt.value);
-        renderGraficos(seleccionados.length > 0 ? seleccionados : usuariosUnicos);
     });
 </script>
+<div class="modal fade" id="modalEntrevista" tabindex="-1" aria-labelledby="modalEntrevistaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form class="modal-content" method="POST" action="controllers/EntrevistaController.php" enctype="multipart/form-data">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEntrevistaLabel">Registrar Nueva Entrevista</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body row g-3">
+                <div class="col-md-4">
+                    <label for="num_entrevista" class="form-label"># Entrevista</label>
+                    <input type="number" class="form-control" name="num_entrevista" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="cod" class="form-label">Usuario (Examinador)</label>
+                    <select class="form-select" name="cod" required>
+                        <option value="" disabled selected>Seleccione...</option>
+                        <?php
+                        require_once __DIR__ . '/../../config/conexion.php';
+                        $pdo = conectar();
+                        $stmt = $pdo->query("SELECT cod, nombre, apellido FROM usuarios");
+                        while ($u = $stmt->fetch()) {
+                            echo "<option value='{$u['cod']}'>{$u['cod']} - {$u['nombre']} {$u['apellido']}</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="cip" class="form-label">Militar Evaluado</label>
+                    <select class="form-select" name="cip" required>
+                        <option value="" disabled selected>Seleccione...</option>
+                        <?php
+                        $stmt = $pdo->query("SELECT cip, nombre, apellido, grado FROM militares");
+                        while ($m = $stmt->fetch()) {
+                            echo "<option value='{$m['cip']}'>{$m['cip']} - {$m['nombre']} {$m['apellido']} ({$m['grado']})</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="fecha" class="form-label">Fecha</label>
+                    <input type="date" class="form-control" name="fecha" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="cat_especifico" class="form-label">Categoría Específica</label>
+                    <input type="number" class="form-control" name="cat_especifico" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="cat_rutinario" class="form-label">Categoría Rutinaria</label>
+                    <input type="number" class="form-control" name="cat_rutinario" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="cat_vinculos_externos" class="form-label">Vínculos Externos</label>
+                    <input type="number" class="form-control" name="cat_vinculos_externos" required>
+                </div>
+                <div class="col-md-8">
+                    <label for="file_entrevista" class="form-label">Archivo (PDF)</label>
+                    <input type="file" class="form-control" name="file_entrevista" accept=".pdf" required>
+                </div>
+                <div class="col-12">
+                    <label for="comentarios" class="form-label">Comentarios</label>
+                    <textarea class="form-control" name="comentarios" maxlength="100" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" name="registrar_entrevista" class="btn btn-primary">Registrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <?php include_once "views/metrica/footer_metrica.php"; ?>

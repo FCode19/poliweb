@@ -1,47 +1,76 @@
 <?php
+require_once __DIR__ . '/../config/conexion.php';
 
 class Metrica {
-    private $rutaBase;
-    
-    public function __construct($rutaBase = "storage/") {
-        $this->rutaBase = rtrim($rutaBase, "/") . "/";
-    }
-    public function obtenerEntrevistasPorUsuario($codUsuario) {
-        $rutaArchivo = $this->rutaBase . "entrevistas_" . $codUsuario . ".json";
+    private $pdo;
 
-        if (!file_exists($rutaArchivo)) {
-            return [];
+    public function __construct() {
+        $this->pdo = conectar();
+    }
+
+    /*public function obtenerEntrevistas() {
+        $sql = "SELECT * FROM entrevista";
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }*/
+    
+    public function obtenerEntrevistas() {
+        $pdo = conectar();
+
+        $sql = "SELECT e.*, m.nombre AS nombre_militar, m.apellido AS apellido_militar FROM entrevista e JOIN militares m ON e.cip = m.cip";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $entrevistas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($entrevistas as &$row) {
+            $row['nombre_completo'] = $row['nombre_militar'] . ' ' . $row['apellido_militar'];
         }
 
-        $contenido = file_get_contents($rutaArchivo);
-        return json_decode($contenido, true) ?? [];
+        return $entrevistas;
+    }
+
+    public function obtenerEntrevistasPorUsuario($codUsuario) {
+        $sql = "SELECT * FROM entrevista WHERE cod = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$codUsuario]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function obtenerEntrevistasPorUsuarios($codUsuarios = []) {
-        $resultados = [];
+        if (empty($codUsuarios)) return [];
 
-        foreach ($codUsuarios as $cod) {
-            $entrevistas = $this->obtenerEntrevistasPorUsuario($cod);
-            foreach ($entrevistas as $entrevista) {
-                $entrevista['cod'] = $cod;
-                $resultados[] = $entrevista;
-            }
-        }
-
-        return $resultados;
+        $placeholders = implode(',', array_fill(0, count($codUsuarios), '?'));
+        $sql = "SELECT * FROM entrevista WHERE cod IN ($placeholders)";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($codUsuarios);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function calcularPromediosPorCategoria($entrevistas) {
         $totales = ['cat_especifico' => 0, 'cat_rutinario' => 0, 'cat_vinculos_externos' => 0];
-        $conteo = 0;
+        $conteo = count($entrevistas);
 
         foreach ($entrevistas as $e) {
             $totales['cat_especifico'] += $e['cat_especifico'] ?? 0;
             $totales['cat_rutinario'] += $e['cat_rutinario'] ?? 0;
             $totales['cat_vinculos_externos'] += $e['cat_vinculos_externos'] ?? 0;
-            $conteo++;
         }
 
         return $conteo > 0 ? array_map(fn($val) => round($val / $conteo, 2), $totales) : $totales;
+    }
+    
+    public function obtenerCipsConNombreCompleto() {
+        require_once __DIR__ . '/../config/conexion.php';
+        $pdo = conectar();
+
+        $stmt = $pdo->query("SELECT DISTINCT m.cip, m.nombre, m.apellido FROM entrevista e JOIN militares m ON e.cip = m.cip");
+
+        $usuarios = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $usuarios[$row['cip']] = $row['cip'] . ' - ' . $row['nombre'] . ' ' . $row['apellido'];
+        }
+
+        return $usuarios;
     }
 }
