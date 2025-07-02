@@ -19,7 +19,7 @@
                     <th>Cat. Rutinario</th>
                     <th>Cat. Vínculos Externos</th>
                     <th>Comentarios</th>
-                    <th>Archivo</th>
+                    <!--<th>Archivo</th>-->
                 </tr>
             </thead>
             <tbody>
@@ -33,13 +33,13 @@
                         <td><?= $e['cat_rutinario'] ?? 0 ?></td>
                         <td><?= $e['cat_vinculos_externos'] ?? 0 ?></td>
                         <td><?= $e['comentarios'] ?? '-' ?></td>
-                        <td>
+                        <!--<td>
                             <?php if (!empty($e['file_entrevista'])): ?>
                                 <a href="controllers/descargar_archivo.php?num=<?= $e['num_entrevista'] ?>" class="btn btn-sm btn-success">Descargar</a>
                             <?php else: ?>
                                 <span class="text-muted">Sin contenido</span>
                             <?php endif; ?>
-                        </td>
+                        </td>-->
                     </tr>
                 <?php endforeach; ?>
             </tbody>

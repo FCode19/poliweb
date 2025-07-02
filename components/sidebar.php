@@ -27,6 +27,17 @@
             </a>
         </li>
     </ul>
+    
+    <small class="text-uppercase text-white-50">Calendarización</small>
+    <hr class="my-1 border-secondary">
+    <ul class="nav flex-column mb-4">
+        <li class="nav-item">
+            <a href="app.php?view=calendario"
+                class="nav-link text-white px-0 <?= ($_GET['view'] ?? '') === 'calendario' ? 'fw-bold' : '' ?>">
+                Calendario
+            </a>
+        </li>
+    </ul>
 
 
     <div class="mt-auto">

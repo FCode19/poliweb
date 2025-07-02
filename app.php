@@ -8,6 +8,7 @@ if (!isset($_SESSION['usuario'])) {
 <?php
 require_once __DIR__ . '/controllers/UsuarioController.php';
 require_once __DIR__ . '/controllers/MetricaController.php';
+require_once __DIR__ . '/controllers/CalendarioController.php';
 
 $vista = $_GET['view'] ?? 'usuarios';
 
@@ -15,7 +16,10 @@ switch ($vista) {
     case 'formularios':
         include __DIR__ . '/views/formulario/listar.php';
         break;
-
+    case 'calendario':
+        $controller = new CalendarioController();
+        $controller->listar();
+        break;
     case 'metrica':
         $controller = new MetricaController();
         $controller->listar();
