@@ -19,6 +19,7 @@
                     <th>Cat. Rutinario</th>
                     <th>Cat. Vínculos Externos</th>
                     <th>Comentarios</th>
+                    <th>Archivo</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,12 +33,19 @@
                         <td><?= $e['cat_rutinario'] ?? 0 ?></td>
                         <td><?= $e['cat_vinculos_externos'] ?? 0 ?></td>
                         <td><?= $e['comentarios'] ?? '-' ?></td>
+                        <td>
+                            <?php if (!empty($e['file_entrevista'])): ?>
+                                <a href="controllers/descargar_archivo.php?num=<?= $e['num_entrevista'] ?>" class="btn btn-sm btn-success">Descargar</a>
+                            <?php else: ?>
+                                <span class="text-muted">Sin contenido</span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
-    
+
     <h2 class="mb-4">Métricas por Militar</h2>
 
     <div class="mb-3">
@@ -54,11 +62,12 @@
         <table class="table table-bordered table-hover">
             <thead class="table-dark">
                 <tr>
-                    <th>Usuario</th>
+                    <th>Militar</th>
                     <th>Específico</th>
                     <th>Rutinario</th>
                     <th>Vínculos Externos</th>
                     <th>Situación</th>
+                    <th>Resultados</th>
                 </tr>
             </thead>
             <tbody id="tablaEntrevistas">
@@ -73,7 +82,24 @@
             </tbody>
         </table>
     </div>
-
+    <script>
+        function generarPDF(nombre, cip, cat_especifico, cat_rutinario, cat_vinculos, situacion, fecha) {
+            const comentario = prompt("¿Desea agregar un comentario para este informe? (Opcional):", "");
+            const comentarioFinal = comentario && comentario.trim() !== "" ? comentario : "Sin comentarios";
+            const params = new URLSearchParams({
+                nombre,
+                cip,
+                cat_especifico,
+                cat_rutinario,
+                cat_vinculos,
+                situacion,
+                fecha,
+                comentario: comentarioFinal
+            });
+            const url = 'controllers/generar_pdf.php?' + params.toString();
+            window.open(url, '_blank');
+        }
+    </script>
     <div class="row mb-5">
         <div class="col-md-6">
             <canvas id="graficoBarras" height="200"></canvas>
@@ -89,16 +115,6 @@ foreach ($entrevistas as &$e) {
 }
 unset($e);
 ?>
-<script>
-    let entrevistas = [];
-    <?php if (!empty($entrevistas)) : ?>
-        entrevistas = <?= json_encode($entrevistas, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK) ?>;
-    <?php else : ?>
-        console.warn("No hay entrevistas disponibles.");
-    <?php endif; ?>
-
-    console.log("Entrevistas cargadas:", entrevistas);
-</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -127,14 +143,16 @@ unset($e);
             tablaBody.innerHTML = '';
             data.forEach(e => {
                 const promedio = (e.cat_especifico + e.cat_rutinario + e.cat_vinculos_externos) / 3;
-                let situacion = '';
+                let situacionTexto = '';
                 if (promedio <= 5) {
-                    situacion = '<span style="color:red; font-weight:bold;">Examinación urgente</span>';
+                    situacionTexto = 'Examinación urgente';
                 } else if (promedio <= 8) {
-                    situacion = '<span style="color:orange; font-weight:bold;">Acudir pronto</span>';
+                    situacionTexto = 'Acudir pronto';
                 } else {
-                    situacion = '<span style="color:green; font-weight:bold;">Esperar próximo examen</span>';
+                    situacionTexto = 'Esperar próximo examen';
                 }
+
+                const situacionHTML = `<span style="color:${promedio <= 5 ? 'red' : promedio <= 8 ? 'orange' : 'green'}; font-weight:bold;">${situacionTexto}</span>`;
 
                 tablaBody.innerHTML += `
                     <tr>
@@ -142,11 +160,23 @@ unset($e);
                         <td>${e.cat_especifico}</td>
                         <td>${e.cat_rutinario}</td>
                         <td>${e.cat_vinculos_externos}</td>
-                        <td>${situacion}</td>
+                        <td>${situacionHTML}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="generarPDF(
+                                '${e.nombre_completo}',
+                                '${e.cip}',
+                                ${e.cat_especifico},
+                                ${e.cat_rutinario},
+                                ${e.cat_vinculos_externos},
+                                '${situacionTexto}',
+                                '${e.fecha}'
+                            )">Generar</button>
+                        </td>
                     </tr>
                 `;
             });
         }
+
 
         function actualizarGraficos(cips) {
             const datos = filtrarPorCip(cips);
